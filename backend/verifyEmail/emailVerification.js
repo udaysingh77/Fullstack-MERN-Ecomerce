@@ -5,8 +5,8 @@ function sendMail(email,token){
     let Transport = nodemailer.createTransport({
        service:"Gmail",
        auth:{
-            user:"suday7807@gmail.com",
-            pass:""
+            user:process.env.MAIL_USER,
+            pass:process.env.MAIL_PASS
        }
     });
 

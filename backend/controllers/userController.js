@@ -26,7 +26,7 @@ export const createUser = async(req,res)=>{
 
         const hasedPassword = await bcrypt.hash(password,10)
         const newUser = await User.create({firstName, lastName, email, password:hasedPassword})
-        let token = await jwt.sign({id:newUser._id},"MYSECRETKEY",{expiresIn:"10m"})
+        let token = await jwt.sign({id:newUser._id},process.env.SECRET_KEY,{expiresIn:"10m"})
         console.log("tokeN=>",token)
         sendMail(email,token)
         newUser.token = token;
