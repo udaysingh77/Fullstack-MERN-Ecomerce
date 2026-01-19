@@ -5,7 +5,11 @@ const routes = express.Router()
 
 routes.post("/register",userController.register)
 
-routes.get("/verify-token",userController.verify)
+routes.get("/verify",userController.verify)
+
+routes.post("/reVerify",userController.reVerify)
+
+routes.post("/login",userController.login)
 
 export default routes
 

@@ -27,7 +27,6 @@ export const register = async(req,res)=>{
         const hasedPassword = await bcrypt.hash(password,10)
         const newUser = await User.create({firstName, lastName, email, password:hasedPassword})
         let token = await jwt.sign({id:newUser._id},process.env.SECRET_KEY,{expiresIn:"10m"})
-        console.log("tokeN=>",token)
         sendMail(email,token)
         newUser.token = token;
         newUser.save()
@@ -39,7 +38,10 @@ export const register = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error);
+        return res.status(500).json({
+            status:true,
+            message:error.message,
+        })
     }
 }
 
@@ -78,7 +80,7 @@ export const verify = async(req,res)=>{
             })
         }
         user.token = null
-        user.isVerified = true
+        user.isVarified = true
         await user.save()
         return res.status(200).json({
             status:true,
@@ -91,4 +93,59 @@ export const verify = async(req,res)=>{
         })
     }
 
+}
+
+
+export const reVerify = async(req,res)=>{
+    try {
+        const {email} = req.body
+        if(!email){
+            return res.status(400).json({
+                status:false,
+                message:"Email not provided"
+            })
+        }
+        const existingUser = await User.findOne({email})
+        if(!existingUser){
+            return res.status(400).json({
+                status:false,
+                message:"User does not exist please register first"
+            })
+        }
+        const token = await jwt.sign({id:existingUser._id},process.env.SECRET_KEY)
+        existingUser.token = token
+        await existingUser.save()
+        sendMail(email,token) //email sent
+        return res.status(200).json({
+            status:true,
+            message:"Verification sent successfully",
+            token
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            status:true,
+            message:"Verification Failed"
+        })
+    }
+
+}
+
+
+export const login = (req,res) =>{
+ try {
+    const {email,password} = req.body
+    if(!email || !password ){
+        return res.status(400).json({
+            status:false,
+            message:"Provide proper credentials"
+        })
+    }
+    
+ } catch (error) {
+    return res.status(500).json({
+        status:true,
+        message:"Login Failed"
+    })
+ }   
 }

@@ -14,8 +14,8 @@ const userSchema = new mongoose.Schema({
     profilePicPublicId:{type:String, default:""},
     role:{type:String,enum:["user","admin"],default:"user"},
     token:{type:String, default:null},
-    isVarified:{type:String, default:false},
-    isLoggedIn:{type:String, default:false},
+    isVarified:{type:Boolean, default:false},
+    isLoggedIn:{type:Boolean, default:false},
     otp:{type:String, default:null},
     otpExpiry:{type:Date, default:null},
 },{timestamps:true})
