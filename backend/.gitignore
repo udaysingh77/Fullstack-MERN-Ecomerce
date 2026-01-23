@@ -1,6 +1,44 @@
-/node_modules
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
 .env
-.vscode
-yarn.lock
-package-lock.json
-package.json
+.env.local
+.env.development
+.env.production
+
+# Build output
+dist/
+build/
+
+# Cache
+.cache/
+.tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Coverage
+coverage/
+
+# PM2
+pids/
+*.pid
+*.seed
+*.log
+
+# Prisma
+prisma/migrations/
