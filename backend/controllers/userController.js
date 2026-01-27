@@ -50,23 +50,23 @@ export const verify = async (req, res) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.json({
+      return res.status(401).json({
         status: false,
-        message: "Token isn not provided or Invalid token",
+        message: "Token is not provided or Invalid token",
       });
     }
     const token = authHeader.split(" ")[1];
     let decoded;
     try {
-      decoded = jwt.decode(token, process.env.SECRET_KEY);
+      decoded = jwt.verify(token, process.env.SECRET_KEY);
     } catch (error) {
       if (error.name === "TokenExpiredError") {
-        return res.status.json({
+        return res.status(400).json({
           status: false,
           message: "The registoration token has expired",
         });
       }
-      return res.status.json({
+      return res.status(400).json({
         status: false,
         message: "Token varification has failed",
       });
@@ -276,7 +276,7 @@ export const verifyOtp = async (req, res) => {
     }
 
     if (Date.now() > existingUser.otpExpiry) {
-      return res.status.json({
+      return res.status(400).json({
         status: false,
         message: "Otp Exired request new Otp",
       });
@@ -368,13 +368,10 @@ export const userById = async (req, res) => {
 
     const user = await User.findOne({ email }).select("-password -token -otp -otpExpiry");
     if (!user) {
-      return (
-        res.status(400),
-        json({
-          status: false,
-          message: "User not Found",
-        })
-      );
+      return res.status(400).json({
+        status: false,
+        message: "User not found",
+      });
     }
 
     return res.status(200).json({

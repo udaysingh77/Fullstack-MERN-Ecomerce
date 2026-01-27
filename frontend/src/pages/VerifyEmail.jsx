@@ -7,14 +7,17 @@ const VerifyEmail = () => {
   const [status, setStatus] = useState("Verifying...");
   const navigate = useNavigate();
 
+  console.log("token=>", token);
+
   const verifyEmail = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/api/v1/user/verify", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "Application/Json",
-        },
-      });
+      const response = await axios.post("http://localhost:3000/api/v1/user/verify", {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "Application/Json",
+          },
+        });
       console.log("response=>", response.data);
       if (response.data.status) {
         setStatus("✅Email Verified Successfully");

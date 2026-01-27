@@ -15,7 +15,7 @@ function sendMail(email, token) {
     from: sender,
     to: email,
     subject: "Email confermation",
-    html: `Press <a href=http://localhost:5172/verify/${token}> here </a> to verify your email. Thanks`,
+    text: `Press http://localhost:5173/verify/${token} to verify your email. Thanks`,
   };
 
   Transport.sendMail(mailOptions, function (error, response) {
