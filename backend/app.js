@@ -3,10 +3,16 @@ import morgan from "morgan";
 import "dotenv/config"
 import connectDb from "./database/db.js"
 import userRoute from "./routes/user.js"
+import cors from "cors"
 
 
 
 const app = express();
+
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 
 app.use(morgan("dev"))
 
