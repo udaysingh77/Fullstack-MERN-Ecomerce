@@ -29,7 +29,6 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    console.log("e.target=>", e.target);
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
