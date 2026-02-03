@@ -48,15 +48,16 @@ const router = createBrowserRouter([
     path: "/verify/:token",
     element: (
       <>
-        <VerifyEmail></VerifyEmail>
+        <VerifyEmail />
       </>
     ),
   },
   {
-    path: "/profile",
+    path: "/profile/:userId",
     element: (
       <>
-        <Navbar /><Profile />
+        <Navbar />
+        <Profile />
       </>
     ),
   },

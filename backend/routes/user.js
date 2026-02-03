@@ -1,6 +1,7 @@
 import express from "express";
 import * as userController from "../controllers/userController.js";
 import { isAuhenticated, isAdmin } from "../middleware/isAuthenticated.js";
+import { singleUpload } from "../middleware/multer.js";
 
 const routes = express.Router();
 
@@ -23,5 +24,7 @@ routes.post("/changed-password/:email", userController.changedPassword);
 routes.get("/all-users", isAuhenticated, isAdmin, userController.allUsers);
 
 routes.get("/get-user/:email", userController.userById);
+
+routes.put("/update/:id", isAuhenticated, singleUpload, userController.updaeUser);
 
 export default routes;
