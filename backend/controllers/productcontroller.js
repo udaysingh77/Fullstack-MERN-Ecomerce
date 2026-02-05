@@ -14,8 +14,10 @@ export const addProducts = async (req, res) => {
     }
 
     //handle multiple Img upload
+    console.log("req.files=>", req.files);
     let productImg = [];
-    if (req.file && req.files.length > 0) {
+    if (req.files && req.files.length > 0) {
+      console.log("This runs=>");
       for (let file of req.files) {
         const fileUri = getDataUri(file);
         const result = await cloudinary.uploader.upload(fileUri, {
@@ -23,11 +25,13 @@ export const addProducts = async (req, res) => {
         });
 
         productImg.push({
-          uri: result.secure_url,
-          public_id: result.pucli_id,
+          url: result.secure_url,
+          public_id: result.public_id,
         });
       }
     }
+
+    console.log("productImg=>", productImg);
 
     //create a product in DB
     const product = await Product.create({
@@ -109,18 +113,20 @@ export const deleteProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const productId = req.params;
+    const { productId } = req.params;
     const { productName, productDesc, productPrice, category, brand, existingImages } = req.body;
+    console.log("productId=>", productId);
     const product = await Product.findById(productId);
+    console.log("product", product);
 
     if (!product) {
-      return res.statas(404).json({
+      return res.status(404).json({
         status: false,
         message: "Product not found",
       });
     }
 
-    const updatedImages = [];
+    let updatedImages = [];
 
     if (existingImages) {
       const keepIds = JSON.parse(existingImages);
@@ -136,12 +142,36 @@ export const updateProduct = async (req, res) => {
       updatedImages = product.productImg;
     }
 
+    //uploade if new Img are provided
+    if (req.files) {
+      for (let file of req.files) {
+        const fileUri = getDataUri(file);
+        const result = await cloudinary.uploader.upload(fileUri, { folder: "mern_products" });
+        updatedImages.push({
+          url: result.secure_url,
+          public_id: result.public_id,
+        });
+      }
+    }
+
+    //update product in DB
+    product.productName = productName || product.productName;
+    product.productDesc = productDesc || product.productDesc;
+    product.productPrice = productPrice || product.productPrice;
+    product.category = category || product.category;
+    product.brand = brand || product.brand;
+    product.productImg = updatedImages;
+
+    await product.save();
+
     return res.status(200).json({
       status: true,
       message: "Product Updated Successfully",
+      product,
     });
   } catch (error) {
-    return res.statas(500).json({
+    console.log(error);
+    return res.status(500).json({
       status: false,
       message: error.message,
     });

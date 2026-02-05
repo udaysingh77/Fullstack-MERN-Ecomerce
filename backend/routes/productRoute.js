@@ -9,4 +9,14 @@ router.get("/all-products", productController.getAllProducts);
 
 router.post("/add", isAuhenticated, isAdmin, multipleUpload, productController.addProducts);
 
+router.delete("/delete/:productId", isAuhenticated, isAdmin, productController.deleteProduct);
+
+router.put(
+  "/update/:productId",
+  isAuhenticated,
+  isAdmin,
+  multipleUpload,
+  productController.updateProduct
+);
+
 export default router;

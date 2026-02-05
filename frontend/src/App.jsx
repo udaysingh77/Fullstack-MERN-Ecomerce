@@ -8,6 +8,7 @@ import Verify from "./pages/Verify";
 import VerifyEmail from "./pages/VerifyEmail";
 import Footer from "./components/Footer";
 import Profile from "./pages/Profile";
+import Products from "./pages/Products";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,15 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <Profile />
+      </>
+    ),
+  },
+  {
+    path: "/products",
+    element: (
+      <>
+        <Navbar />
+        <Products />
       </>
     ),
   },
