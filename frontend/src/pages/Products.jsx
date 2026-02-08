@@ -1,5 +1,6 @@
 import FilterSidebar from "@/components/FilterSidebar";
 import React, { useEffect, useState } from "react";
+
 import {
   Select,
   SelectContent,
@@ -12,11 +13,22 @@ import {
 import ProductCard from "@/components/ProductCard";
 import axios from "axios";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { setProducts } from "@/redux/productSlice";
 
 const Products = () => {
+  const { products } = useSelector((store) => store.product);
   const [allProducts, setAllProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [brand, setBrand] = useState("All");
+  const [loading, setLoading] = useState(false);
+  const [priceRange, setPriceRange] = useState([0, 999999999]);
+  const [sortOrder, setSortOrder] = useState("");
+  const dispatch = useDispatch();
   const getAllProducts = async () => {
     try {
+      setLoading(true);
       let res = await axios.get("http://localhost:3000/api/v1/product/all-products", {
         headers: {
           "Content-Type": "application/json",
@@ -24,23 +36,74 @@ const Products = () => {
       });
       if (res.data.status) {
         setAllProducts(res.data.products);
+        dispatch(setProducts(res.data.products));
       }
       console.log("allProducts=>", allProducts);
     } catch (error) {
       console.log(error);
       toast.error(error.response, data.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (allProducts.length === 0) return;
+
+    let filtered = [...allProducts];
+
+    if (search.trim !== "") {
+      filtered = allProducts.filter((p) => {
+        p.productName?.toLowerCase().includes(search.toLowerCase());
+      });
+    }
+
+    if (brand !== "All") {
+      filtered = allProducts.filter((p) => {
+        return p.brand === brand;
+      });
+    }
+
+    if (category !== "All") {
+      filtered = allProducts.filter((p) => {
+        return p.category === category;
+      });
+    }
+
+    filtered = allProducts.filter(
+      (p) => p.productPrice >= priceRange[0] && p.productPrice[1] <= priceRange[1]
+    );
+
+    if (sortOrder === "lowToHigh") {
+      filtered.sort((a, b) => a.productPrice - b.productPrice);
+    } else if (sortOrder === "highToLow") {
+      filtered.sort((a, b) => b.productPrice - a.productPrice);
+    }
+
+    dispatch(setProducts(filtered));
+  }, [search, category, brand, sortOrder, priceRange, allProducts, dispatch]);
 
   useEffect(() => {
     getAllProducts();
   }, []);
 
+  console.log("products=>", products);
+
   return (
     <div className="p-20 pb-10">
       <div className="max-w-7xl mx-auto gap-7">
         {/* Sidebar */}
-        <FilterSidebar />
+        <FilterSidebar
+          search={search}
+          setSearch={setSearch}
+          brand={brand}
+          setBrand={setBrand}
+          category={category}
+          setCategory={setCategory}
+          allProducts={allProducts}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+        />
         {/* Main Product Section */}
         <div className="flex flex-col flex-1">
           <div className="flex justify-end mb-4">
