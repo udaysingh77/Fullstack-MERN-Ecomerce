@@ -91,7 +91,7 @@ const Products = () => {
 
   return (
     <div className="p-20 pb-10">
-      <div className="max-w-7xl mx-auto gap-7">
+      <div className="max-w-11/12 mx-auto flex justify-between gap-7">
         {/* Sidebar */}
         <FilterSidebar
           search={search}
@@ -104,9 +104,15 @@ const Products = () => {
           priceRange={priceRange}
           setPriceRange={setPriceRange}
         />
+        {/* Product list */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7 pt-4">
+          {products.map((product) => {
+            return <ProductCard product={product} key={product._id} />;
+          })}
+        </div>
         {/* Main Product Section */}
-        <div className="flex flex-col flex-1">
-          <div className="flex justify-end mb-4">
+        <div className="flex flex-col flex-1 pt-4">
+          <div className="flex mb-4">
             <Select>
               <SelectTrigger className="w-full max-w-48">
                 <SelectValue placeholder="Price Range" />
@@ -119,12 +125,6 @@ const Products = () => {
               </SelectContent>
             </Select>
           </div>
-        </div>
-        {/* Product list */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7">
-          {allProducts.map((products) => {
-            return <ProductCard products={products} key={products._id} />;
-          })}
         </div>
       </div>
     </div>

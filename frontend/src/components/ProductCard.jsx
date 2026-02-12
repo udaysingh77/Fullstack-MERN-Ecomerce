@@ -3,8 +3,8 @@ import React from "react";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 
-const ProductCard = ({ products, loading }) => {
-  const { productImg, productPrice, productName } = products;
+const ProductCard = ({ product, loading }) => {
+  const { productImg, productPrice, productName } = product;
   return (
     <div className="shadow-lg rounded-lg overflow-hidden h-max">
       <div className="w-full h-full aspect-square overflow-hidden">

@@ -51,7 +51,7 @@ const FilterSidebar = ({
         type="text"
         placeholder="search..."
         value={search}
-        onChnage={(e) => setSearch(e.target.value)}
+        onChange={(e) => setSearch(e.target.value)}
         className="bg-white rounded-md border-gray-400 border-2 w-full"
       />
       {/* Category */}
