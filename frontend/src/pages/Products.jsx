@@ -52,26 +52,26 @@ const Products = () => {
 
     let filtered = [...allProducts];
 
-    if (search.trim !== "") {
-      filtered = allProducts.filter((p) => {
-        p.productName?.toLowerCase().includes(search.toLowerCase());
-      });
+    if (search.trim() !== "") {
+      filtered = filtered.filter((p) =>
+        p.productName?.toLowerCase().includes(search.toLowerCase())
+      );
     }
 
     if (brand !== "All") {
-      filtered = allProducts.filter((p) => {
+      filtered = filtered.filter((p) => {
         return p.brand === brand;
       });
     }
 
     if (category !== "All") {
-      filtered = allProducts.filter((p) => {
+      filtered = filtered.filter((p) => {
         return p.category === category;
       });
     }
 
-    filtered = allProducts.filter(
-      (p) => p.productPrice >= priceRange[0] && p.productPrice[1] <= priceRange[1]
+    filtered = filtered.filter(
+      (p) => p.productPrice >= priceRange[0] && p.productPrice <= priceRange[1]
     );
 
     if (sortOrder === "lowToHigh") {
