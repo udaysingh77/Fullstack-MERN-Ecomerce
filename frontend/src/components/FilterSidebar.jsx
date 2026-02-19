@@ -41,7 +41,7 @@ const FilterSidebar = ({
     setSearch("");
     setCategory("All");
     setBrand("All");
-    setPriceRange([0, 99999]);
+    setPriceRange([0, 999999999]);
   };
 
   return (
@@ -78,7 +78,7 @@ const FilterSidebar = ({
         onChange={handleBrandChange}
       >
         {UniqueBrands.map((item, index) => (
-          <option value="" key={index}>
+          <option value={item} key={index}>
             {item.toUpperCase()}
           </option>
         ))}
@@ -93,7 +93,7 @@ const FilterSidebar = ({
           <input
             type="number"
             min="0"
-            max="5000"
+            max="99999"
             className="border-gray-300 rounded border w-20 p-1 "
             value={priceRange[0]}
             onChange={handleMinChange}
@@ -111,7 +111,7 @@ const FilterSidebar = ({
         <input
           type="range"
           min="0"
-          max="5000"
+          max="99999"
           step="100"
           value={priceRange[0]}
           onChange={handleMinChange}

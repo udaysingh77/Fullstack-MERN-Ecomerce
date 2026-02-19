@@ -5,6 +5,7 @@ import connectDb from "./database/db.js";
 import userRoute from "./routes/user.js";
 import cors from "cors";
 import productRoute from "./routes/productRoute.js";
+import cartRoute from "./routes/cartRoute.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
+app.use("/api/v1/cart", cartRoute);
 
 app.get("/", (req, res) => {
   res.json({
