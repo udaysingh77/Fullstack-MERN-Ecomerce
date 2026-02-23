@@ -164,7 +164,7 @@ export const login = async (req, res) => {
 
     //Generate token
     const accessToken = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, {
-      expiresIn: "10m",
+      expiresIn: "12h",
     });
     const refreshToken = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, {
       expiresIn: "30d",

@@ -17,7 +17,7 @@ const Profile = () => {
   const [updateUser, setUpdateUser] = useState({
     firstName: user?.firstName,
     lastName: user?.lastName,
-    email: user.email,
+    email: user?.email,
     phoneNo: user?.phoneNo,
     address: user?.address,
     city: user?.city,

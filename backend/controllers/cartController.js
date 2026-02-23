@@ -70,7 +70,7 @@ export const addTocart = async (req, res) => {
       }
       //Recalculate total Price
 
-      cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity);
+      cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
     }
 
     //save updated cart

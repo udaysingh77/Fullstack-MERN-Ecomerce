@@ -9,26 +9,37 @@ import { setUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const user = useSelector((state) => state.user.user);
+  const { user } = useSelector((store) => store.user);
+  const { cart } = useSelector((store) => store.product);
+  console.log("cart=>", cart);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
 
   const logoutHandler = async () => {
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/user/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/user/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status) {
+        toast.success(response.data.message);
       }
-    );
-    if (response.data.status) {
+    } catch (error) {
+      // Token may be expired or invalid — still log out locally
+      console.log("Logout error:", error?.response?.data?.message || error.message);
+    } finally {
+      // Always clear local session regardless of server response
       localStorage.removeItem("token");
       dispatch(setUser(null));
       toast.success(response.data.message);
+      // navigate("/login");
     }
   };
 
@@ -58,7 +69,7 @@ const Navbar = () => {
           <Link to={"/cart"} className="relative">
             <ShoppingCart />
             <span className="bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2">
-              0
+              {cart?.items?.length || 0}
             </span>
           </Link>
           {user ? (
