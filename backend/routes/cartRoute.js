@@ -10,6 +10,6 @@ router.post("/add", isAuhenticated, cartController.addTocart);
 
 router.delete("/remove", isAuhenticated, cartController.removeFromCart);
 
-router.put("/update ", isAuhenticated, cartController.updateQuantity);
+router.put("/update", isAuhenticated, cartController.updateQuantity);
 
 export default router;

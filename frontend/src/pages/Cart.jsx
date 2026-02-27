@@ -1,20 +1,67 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import manocin from "../assets/manicon.png";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
+import { setCart } from "@/redux/productSlice";
+import axios from "axios";
+
 const Cart = () => {
   const { cart } = useSelector((store) => store.product);
   console.log("cart=>", cart);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const subTotal = cart?.totalPrice;
   const shipping = subTotal > 300 ? 0 : 10;
   const tax = subTotal * 0.05; //5%
   const total = subTotal + shipping + tax;
+
+  const token = localStorage.getItem("token");
+  const API = `http://localhost:3000/api/v1/cart`;
+
+  const handleUpdateQuantity = async (productId, type) => {
+    try {
+      const res = await axios.put(
+        `${API}/update`,
+        { productId, type },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.data.status) {
+        dispatch(setCart(res.data.cart));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRemove = async (productId) => {
+    try {
+      const res = await axios.delete(`${API}/remove`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { productId },
+      });
+      if (res.data.status) {
+        dispatch(setCart(res.data.cart));
+        toast.success("Product removed from Cart");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="pt-20 bg-gray-50 min-h-screen">
       {cart?.items?.length > 0 ? (
@@ -39,12 +86,25 @@ const Cart = () => {
                       </div>
                     </div>
                     <div className=" flex gap-5 items-center">
-                      <Button variant="outline">-</Button>
-                      <span>1</span>
-                      <Button variant="outline">+</Button>
+                      <Button
+                        onClick={() => handleUpdateQuantity(product.productId._id, "decrease")}
+                        variant="outline"
+                      >
+                        -
+                      </Button>
+                      <span>{product.quantity}</span>
+                      <Button
+                        onClick={() => handleUpdateQuantity(product.productId._id, "increase")}
+                        variant="outline"
+                      >
+                        +
+                      </Button>
                     </div>
                     <p>{product?.productId?.productPrice * product.quantity}</p>
-                    <p className="flex text-red-400 items-center gap-1 cursor-pointer">
+                    <p
+                      onClick={() => handleRemove(product?.productId?._id)}
+                      className="flex text-red-400 items-center gap-1 cursor-pointer"
+                    >
                       <Trash2 />
                       Remove
                     </p>
@@ -96,7 +156,20 @@ const Cart = () => {
           </div>
         </div>
       ) : (
-        <div></div>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
+          {/* Icon */}
+          <div className="bg-pink-100 rounded-full p-6">
+            <ShoppingCart className="text-pink-600 w-16 h-16" />
+          </div>
+          <h2 className="font-bold text-2xl mt-6 text-gray-800 ">Your Cart is Empty</h2>
+          <p className="mt-2 text-gray-600">Looks like you haven't added anything to your cart</p>
+          <Button
+            onClick={() => navigate("/products")}
+            className="bg-pink-600 mt-6 cursor-pointer text-white py-3 px-6 hover:bg-pink-700"
+          >
+            Start Shopping
+          </Button>
+        </div>
       )}
     </div>
   );

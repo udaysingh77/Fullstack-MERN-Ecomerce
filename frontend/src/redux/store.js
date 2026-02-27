@@ -3,7 +3,6 @@ import userSlice from "./userSlice";
 import productSlice from "./productSlice";
 import { combineReducers } from "redux";
 import {
-  persistStore,
   persistReducer,
   FLUSH,
   REHYDRATE,
