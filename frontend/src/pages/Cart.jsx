@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import manocin from "../assets/manicon.png";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ const Cart = () => {
   console.log("cart=>", cart);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const subTotal = cart?.totalPrice;
   const shipping = subTotal > 300 ? 0 : 10;
   const tax = subTotal * 0.05; //5%
@@ -45,6 +44,22 @@ const Cart = () => {
     }
   };
 
+  const loadCart = async () => {
+    try {
+      const res = await axios.get(`${API}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.data.status) {
+        dispatch(setCart(res.data.cart));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleRemove = async (productId) => {
     try {
       const res = await axios.delete(`${API}/remove`, {
@@ -61,6 +76,10 @@ const Cart = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    loadCart;
+  }, [dispatch]);
 
   return (
     <div className="pt-20 bg-gray-50 min-h-screen">

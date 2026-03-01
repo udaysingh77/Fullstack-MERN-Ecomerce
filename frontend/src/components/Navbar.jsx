@@ -15,6 +15,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
+  const admin = user?.role === "admin" ? true : false;
 
   const logoutHandler = async () => {
     try {
@@ -38,7 +39,7 @@ const Navbar = () => {
       // Always clear local session regardless of server response
       localStorage.removeItem("token");
       dispatch(setUser(null));
-      toast.success(response.data.message);
+      // toast.success(response.data.message);
       // navigate("/login");
     }
   };
@@ -63,6 +64,11 @@ const Navbar = () => {
             {user && (
               <Link to={`/profile/${user._id}`}>
                 <li>Hello {user.firstName}</li>
+              </Link>
+            )}
+            {admin && (
+              <Link to={`/dashboard/sales`}>
+                <li>Dashboard</li>
               </Link>
             )}
           </ul>
