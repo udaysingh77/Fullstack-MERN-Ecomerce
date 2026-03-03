@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setCart } from "@/redux/productSlice";
 
 const ProductDesc = ({ product }) => {
-  const token = localhost.getItem("token");
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const addToCart = async (productId) => {
     try {

@@ -9,7 +9,7 @@ const SingleProduct = () => {
   const params = useParams();
   const productId = params.id;
   const { products } = useSelector((store) => store.product);
-  const product = products.find((item) => (item._id = productId));
+  const product = products.find((item) => item._id === productId);
 
   return (
     <div className="pt-20 py-10 max-w-7xl mx-auto">
