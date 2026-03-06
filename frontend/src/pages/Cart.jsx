@@ -78,7 +78,7 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    loadCart;
+    loadCart();
   }, [dispatch]);
 
   return (

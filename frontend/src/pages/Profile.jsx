@@ -128,7 +128,7 @@ const Profile = () => {
                       <Label className="block text-sm font-medium">LastName</Label>
                       <Input
                         type="text"
-                        name="firstName"
+                        name="lastName"
                         placeholder="Doe"
                         value={updateUser.lastName}
                         onChange={handleChage}
