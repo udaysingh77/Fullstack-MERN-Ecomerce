@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,23 +11,14 @@ import { useDispatch } from "react-redux";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
+import { setUser } from '@/redux/userSlice';
 
 const UserInfo = () => {
   const params = useParams();
   const userId = params.userId;
   const dispatch = useDispatch();
-  const { user } = useSelector((store) => store.user);
-  const [updateUser, setUpdateUser] = useState({
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    email: user?.email,
-    phoneNo: user?.phoneNo,
-    address: user?.address,
-    city: user?.city,
-    zipCode: user?.zipCode,
-    profilePic: user?.profilePic,
-    role: user?.role,
-  });
+  // const { user } = useSelector((store) => store.user);
+  const [updateUser, setUpdateUser] = useState(null);
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
   const handleFileChange = (e) => {
@@ -71,13 +62,35 @@ const UserInfo = () => {
 
       if (response.data.status) {
         toast.success(response.data.message);
-        // dispatch(setUser(response.data.user));
+        dispatch(setUser(response.data.user));
       }
     } catch (error) {
       console.log(error);
       toast.error("Failed to Update User");
     }
   };
+
+  const getUserDetails = async() =>{
+        const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get(`http://localhost:3000/api/v1/user/get-user/${userId}`,{
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      })
+      if(res.data.status){
+        setUpdateUser(res.data.user)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  useEffect(()=>{
+    getUserDetails()
+  },[])
+
   return (
     <div className="pl-[350px] w-full pt-5 min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto">
