@@ -159,7 +159,9 @@ const Cart = () => {
                       <Input placeholder="Promo Code" />
                       <Button variant="outline">Apply</Button>
                     </div>
-                    <Button className="w-full bg-pink-600">Place Order</Button>
+                    <Button onClick={() => navigate("/address")} className="w-full bg-pink-600">
+                      Place Order
+                    </Button>
                     <Button className="w-full" variant="outline">
                       <Link to="/products">Contine Shopping</Link>
                     </Button>
