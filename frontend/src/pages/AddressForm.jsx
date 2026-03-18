@@ -76,7 +76,6 @@ const AddressForm = () => {
           try {
             const verifyRes = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,
               response,{
-
                 headers:{Authorization:`Bearer ${token}`}
               }
             )
@@ -88,13 +87,50 @@ const AddressForm = () => {
               toast.error("Payment verification failed")
             }
           } catch (error) {
-            toast.error("Error verifying payment",error)
+            console.log(error)
+            toast.error("Error verifying payment")
           }
-        }
-        //modal code here
+        },
+        modal:{
+          ondismiss:async function(){
+            //handle user closing the popup
+            await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,{
+              razorpay_order_id:data.order.id,
+              paymentFailed:true,
+            },{
+              headers:{
+                Authorization:`Bearer ${token}`,
+              }
+            })
+            toast.error("Payment Canceld or failed");
+          }
+        },
+        prefill:{
+          name:formData.fullName,
+          email:formData.email,
+          contact:formData.phone
+        },
+        theme:{color: "#F472B6"},
       }
+
+      const rzp = new window.Razorpay(options)
+
+      //listen for payment Failures
+      rzp.on("payment.failed",async function(response){
+        await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,{
+          razorpay_order_id:data.order.id,
+          paymentFailed:true
+        },{
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        })
+        toast.error("Payment Failed. Please Try again")
+      })
+      rzp.open()
     } catch (error) {
-      console.log(error)
+      console.error("Error in payment.failed",error)
+      toast.error("Something went wrong while processing payment")
     }
   }
 
@@ -228,7 +264,9 @@ const AddressForm = () => {
               <Button variant="outline" className="w-full" onClick={() => setShowForm(true)}>
                 + Add New Address
               </Button>
-              <Button disabled={selectedAddress === null} className="w-full bg-pink-600">
+              <Button disabled={selectedAddress === null} 
+              onClick={handlePayment}
+              className="w-full bg-pink-600">
                 Proceed To Checkout
               </Button>
             </div>
