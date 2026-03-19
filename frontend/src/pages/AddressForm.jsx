@@ -4,14 +4,14 @@ import { Label } from "@/components/ui/label";
 import { addAdresses, deleteAddress, setSelectedAddress } from "@/redux/productSlice";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Card } from '@/components/ui/card';
-import { CardTitle } from '@/components/ui/card';
-import { CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { CardHeader } from '@/components/ui/card';
-import axios from "axios"
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { Card } from "@/components/ui/card";
+import { CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { CardHeader } from "@/components/ui/card";
+import axios from "axios";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { setCart } from "@/redux/productSlice";
 
 const AddressForm = () => {
@@ -25,8 +25,8 @@ const AddressForm = () => {
     zip: "",
     country: "",
   });
-  const navigate = useNavigate()
-  const {cart, addresses, selectedAddress } = useSelector((store) => store.product);
+  const navigate = useNavigate();
+  const { cart, addresses, selectedAddress } = useSelector((store) => store.product);
   const [showForm, setShowForm] = useState(addresses?.length > 0 ? false : true);
   const dispatch = useDispatch();
   const handleChange = (e) => {
@@ -36,103 +36,113 @@ const AddressForm = () => {
   const subtotal = cart.totalPrice;
   const shipping = subtotal > 50 ? 0 : 10;
   const tax = parseFloat((subtotal * 0.05).toFixed());
-  const total = subtotal + shipping + tax
-
+  const total = subtotal + shipping + tax;
 
   const handleSave = () => {
     dispatch(addAdresses(formData));
     setShowForm(false);
   };
-  console.log("cart=>",cart)
 
-  const handlePayment = async()=>{
+  const handlePayment = async () => {
     const token = localStorage.getItem("token");
     try {
-      const {data} = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/create-order`,{
-        products : cart?.items?.map((item)=>(
-          {
-            productId:item.productId._id,
-            quantity:item.quantity,
-          }
-        )),
-        tax,
-        shipping,
-        amount:total,
-        currency:"INR"
-      })
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_URL}/api/v1/order/create-order`,
+        {
+          products: cart?.items?.map((item) => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+          })),
+          tax,
+          shipping,
+          amount: total,
+          currency: "INR",
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      if(!data.status) return toast.error("Something Went Wrong")
+      if (!data.status) return toast.error("Something Went Wrong");
 
-        console.log("RazorPay data",data)
+      console.log("RazorPay data", data);
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount:data.order.amount,
-        currency:data.order.currency,
-        order_id:data.order.id, // order_id from backend
-        name:"Ekart",
-        description:"Order Payment",
-        handler:async function(response){
+        amount: data.order.amount,
+        currency: data.order.currency,
+        order_id: data.order.id, // order_id from backend
+        name: "Ekart",
+        description: "Order Payment",
+        handler: async function (response) {
           try {
-            const verifyRes = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,
-              response,{
-                headers:{Authorization:`Bearer ${token}`}
+            const verifyRes = await axios.post(
+              `${import.meta.env.VITE_URL}/api/v1/order/verify-payment`,
+              response,
+              {
+                headers: { Authorization: `Bearer ${token}` },
               }
-            )
-            if(verifyRes.data.status){
-              toast.success("✅ Payment Successfull")
-              dispatch(setCart({items:[],totalPrice:0}))
-              navigate("/order-success")
-            }else{
-              toast.error("Payment verification failed")
+            );
+            if (verifyRes.data.status) {
+              toast.success("✅ Payment Successfull");
+              dispatch(setCart({ items: [], totalPrice: 0 }));
+              navigate("/order-success");
+            } else {
+              toast.error("Payment verification failed");
             }
           } catch (error) {
-            console.log(error)
-            toast.error("Error verifying payment")
+            console.log(error);
+            toast.error("Error verifying payment");
           }
         },
-        modal:{
-          ondismiss:async function(){
+        modal: {
+          ondismiss: async function () {
             //handle user closing the popup
-            await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,{
-              razorpay_order_id:data.order.id,
-              paymentFailed:true,
-            },{
-              headers:{
-                Authorization:`Bearer ${token}`,
+            await axios.post(
+              `${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,
+              {
+                razorpay_order_id: data.order.id,
+                paymentFailed: true,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
               }
-            })
+            );
             toast.error("Payment Canceld or failed");
-          }
+          },
         },
-        prefill:{
-          name:formData.fullName,
-          email:formData.email,
-          contact:formData.phone
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone,
         },
-        theme:{color: "#F472B6"},
-      }
+        theme: { color: "#F472B6" },
+      };
 
-      const rzp = new window.Razorpay(options)
+      const rzp = new window.Razorpay(options);
 
       //listen for payment Failures
-      rzp.on("payment.failed",async function(response){
-        await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,{
-          razorpay_order_id:data.order.id,
-          paymentFailed:true
-        },{
-          headers:{
-            Authorization:`Bearer ${token}`
+      rzp.on("payment.failed", async function (response) {
+        await axios.post(
+          `${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,
+          {
+            razorpay_order_id: data.order.id,
+            paymentFailed: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        })
-        toast.error("Payment Failed. Please Try again")
-      })
-      rzp.open()
+        );
+        toast.error("Payment Failed. Please Try again");
+      });
+      rzp.open();
     } catch (error) {
-      console.error("Error in payment.failed",error)
-      toast.error("Something went wrong while processing payment")
+      console.error("Error in payment.failed", error);
+      toast.error("Something went wrong while processing payment");
     }
-  }
+  };
 
   return (
     <div className="max-w-7xl mx-auto grid p-10 place-items-center">
@@ -264,9 +274,11 @@ const AddressForm = () => {
               <Button variant="outline" className="w-full" onClick={() => setShowForm(true)}>
                 + Add New Address
               </Button>
-              <Button disabled={selectedAddress === null} 
-              onClick={handlePayment}
-              className="w-full bg-pink-600">
+              <Button
+                disabled={selectedAddress === null}
+                onClick={handlePayment}
+                className="w-full bg-pink-600"
+              >
                 Proceed To Checkout
               </Button>
             </div>
@@ -275,9 +287,7 @@ const AddressForm = () => {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>
-                Order Summary
-              </CardTitle>
+              <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between">

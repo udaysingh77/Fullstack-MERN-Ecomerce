@@ -9,6 +9,7 @@ import userLogo from "../assets/user-icon.jpg";
 import axios from "axios";
 import { toast } from "sonner";
 import { setUser } from "@/redux/userSlice";
+import MyOrder from "./MyOrder";
 
 const Profile = () => {
   const params = useParams();
@@ -201,7 +202,9 @@ const Profile = () => {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="Orders">Change your Orders here.</TabsContent>
+        <TabsContent value="Orders">
+          <MyOrder />
+        </TabsContent>
       </Tabs>
     </div>
   );
