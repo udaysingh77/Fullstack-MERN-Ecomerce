@@ -17,7 +17,7 @@ const MyOrder = () => {
         },
       });
       if (res.data.status) {
-        setUserOrder(res.data.order);
+        setUserOrder(res.data.orders);
       }
     } catch (error) {
       console.log(error);
@@ -44,15 +44,26 @@ const MyOrder = () => {
             <p>No Order found for this user</p>
           </div>
         ) : (
-          <div>
+          <div className="space-y-6 w-full">
             {userOrder?.map((order) => {
-              <div>
-                <div>
-                  <h2>
-                    Order Id: <span className="text-gray-600">{order._id}</span>
-                  </h2>
+              return (
+                <div className="shadow-2xl rounded-2xl p-5 border border-gray-200">
+                  {/* order header */}
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold">
+                      Order Id: <span className="text-gray-600">{order._id}</span>
+                    </h2>
+                    <p className="text-gray-500 text-sm">
+                      Amount{" "}
+                      <span className="font-bold">
+                        {order.currency} {order.amount.toFixed(2)}
+                      </span>{" "}
+                    </p>
+                  </div>
+
+                  {/*user Info */}
                 </div>
-              </div>;
+              );
             })}
           </div>
         )}
