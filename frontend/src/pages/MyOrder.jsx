@@ -62,6 +62,30 @@ const MyOrder = () => {
                   </div>
 
                   {/*user Info */}
+                  <div className="flex justify-between items-center">
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-700"><span className="font-medium">User:{" "} {order.user?.firstName || "Unknown" } {order.user?.lastName}</span></p>
+                      <p className="text-sm text-gray-500">
+                        Email:{order.user?.email|| "N/A"}
+                      </p>
+                    </div>
+                    <span className={`${order.status==="Paid" ? "bg-green-500":order.status==="Failed" ? "bg-red-500":"bg-orange-300"} text-white px-2 py-1 rounded-lg`}>{order.status}</span>
+                  </div>
+
+                  {/* Products */}
+                  <div>
+                    <h3 className="font-medium mb-2">Products:</h3>
+                    <ul className="space-y-2">
+                      {order.products.map((product,index)=>(
+                        <li onClick={()=>navigate(`products/${product?.productId?._id}`)} key={index} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                          <img src={product.productId.productImg?.[0].url} alt="" className="w-16, cursor-pointer"/>
+                          <span className="w-[300px] line-clamp-2">{product?.producId?.productName}</span>
+                          <span>{product?.productId?._id}</span>
+                          <span className='font-medium'>{product.productId?.productPrice} x {product.quantity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               );
             })}
