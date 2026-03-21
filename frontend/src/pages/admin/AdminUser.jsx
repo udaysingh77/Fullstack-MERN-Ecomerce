@@ -72,7 +72,10 @@ const AdminUser = () => {
                   <Edit />
                   Edit
                 </Button>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/dashboard/users/orders/${user?._id}`)}
+                >
                   <Eye />
                   Show Order
                 </Button>
