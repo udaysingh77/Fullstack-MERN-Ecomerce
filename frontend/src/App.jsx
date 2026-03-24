@@ -21,7 +21,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import UserInfo from "./pages/admin/UserInfo";
 import SingleProduct from "./pages/SingleProduct";
 import AddressForm from "./pages/AddressForm";
-import OrderSuccess from './pages/OrderSuccess';
+import OrderSuccess from "./pages/OrderSuccess";
 
 const router = createBrowserRouter([
   {
@@ -146,7 +146,7 @@ const router = createBrowserRouter([
         element: <AdminOrders />,
       },
       {
-        path: "user/orders/:userId",
+        path: "users/orders/:userId",
         element: <ShowUserOrders />,
       },
       {

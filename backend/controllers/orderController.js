@@ -1,4 +1,6 @@
+import { Product } from "../models/productModel.js";
 import { Cart } from "../models/cartModel.js";
+import User from "../models/user.js";
 import razorpayInstance from "./../config/razorpay.js";
 import { Order } from "./../models/orderModel.js";
 import crypto from "crypto";
@@ -107,6 +109,106 @@ export const getMyOrder = async (req, res) => {
   } catch (error) {
     console.log("error in getMyOrder", error);
     return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+//Admin Only
+
+export const getUserOrder = async (req, res) => {
+  try {
+    const { userId } = req.params; //userId will come from Url
+    const orders = await Order.find({ user: userId })
+      .populate({
+        path: "products.productId",
+        select: "ProductName productPrice productImg",
+      })
+      .populate("user", "firstName lastName email"); //fetch user Info
+
+    res.status(200).json({
+      status: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.log("Error in getUserOrder", error);
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getAllOrdersAdmin = async (req, res) => {
+  try {
+    const orders = await Order.find({})
+      .sort({ createdAt: -1 })
+      .populate("user", "name email")
+      .populate("products.productId", "productName productPrice");
+    res.json({
+      status: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.log("Error in getAllOrdersAdmin", error);
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getSalesData = async (req, res) => {
+  try {
+    const totalUser = await User.countDocuments();
+    const totalProducts = await Product.countDocuments();
+    const totalOrders = await Order.countDocuments();
+
+    //total sales amount
+    const totalSaleAgg = await Order.aggregate([
+      { $match: { status: "Paid" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+
+    const totalSales = totalSaleAgg[0]?.total || 0;
+
+    //sales group by date (last 30 days)
+
+    const thirtyDayAgo = new Date();
+    thirtyDayAgo.setDate(thirtyDayAgo.getDate() - 30);
+
+    const salesByDate = await Order.aggregate([
+      { $match: { status: "Paid", createdAt: { $gte: thirtyDayAgo } } },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          amount: { $sum: "$amount" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const formattedSales = salesByDate.map((item) => ({
+      date: item._id,
+      amount: item.amount,
+    }));
+
+    res.status(200).json({
+      status: true,
+      totalUsers: totalUser,
+      totalProducts,
+      totalOrders,
+      totalSales,
+      salesByDate: formattedSales, // 👈 match frontend
+    });
+  } catch (error) {
+    console.log("Error in getSalesData", error);
+    res.status(500).json({
       status: false,
       message: error.message,
     });
