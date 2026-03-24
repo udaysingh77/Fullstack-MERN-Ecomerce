@@ -45,7 +45,7 @@ const FilterSidebar = ({
   };
 
   return (
-    <div className="bg-gray-100 mt-10 p-4 rounded-md h-max hidden md:block w-64 ">
+    <div className="bg-gray-100 mt-10 p-4 rounded-md h-[60vh] hidden md:block min-w-[256px] max-w-[256px] ">
       {/* search */}
       <Input
         type="text"
