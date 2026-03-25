@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
+import Elogo from "../../src/assets/eLogo.png"
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.user);
@@ -49,8 +50,7 @@ const Navbar = () => {
       <div className=" max-w-7xl mx-auto flex justify-between items-center py-3">
         {/* logo section */}
         <div>
-          {/* <img src="/Ekart.png" alt="logo" className="w-[100px]" /> */}
-          <BaggageClaim size={50} color="red" />
+          <img src={Elogo} alt="logo" className="w-[60px]" />
         </div>
         {/* Nav section */}
         <nav className=" flex gap-10 justify-between items-center">
