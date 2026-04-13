@@ -22,6 +22,7 @@ import UserInfo from "./pages/admin/UserInfo";
 import SingleProduct from "./pages/SingleProduct";
 import AddressForm from "./pages/AddressForm";
 import OrderSuccess from "./pages/OrderSuccess";
+import MyOrder from "./pages/MyOrder";
 
 const router = createBrowserRouter([
   {
@@ -117,6 +118,15 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <OrderSuccess />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/orders",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <MyOrder />
       </ProtectedRoute>
     ),
   },

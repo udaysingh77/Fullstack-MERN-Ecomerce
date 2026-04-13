@@ -4,11 +4,11 @@ import { Product } from "../models/productModel.js";
 export const getcart = async (req, res) => {
   try {
     const userId = req.id;
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart) {
       return res.status(200).json({
         status: true,
-        cart: [],
+        cart: { items: [], totalPrice: 0 },
       });
     }
     return res.status(200).json({

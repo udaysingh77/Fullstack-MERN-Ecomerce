@@ -17,10 +17,10 @@ const Cart = () => {
   console.log("cart=>", cart);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const subTotal = cart?.totalPrice;
+  const subTotal = cart?.totalPrice || 0;
   const shipping = subTotal > 300 ? 0 : 10;
-  const tax = subTotal * 0.05; //5%
-  const total = subTotal + shipping + tax;
+  const tax = parseFloat((subTotal * 0.05).toFixed(2)); //5%
+  const total = parseFloat((subTotal + shipping + tax).toFixed(2));
 
   const token = localStorage.getItem("token");
   const API = `http://localhost:3000/api/v1/cart`;
@@ -53,7 +53,6 @@ const Cart = () => {
       });
       if (res.data.status) {
         dispatch(setCart(res.data.cart));
-        toast.success(res.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -88,48 +87,57 @@ const Cart = () => {
           <h1 className="text-2xl font-bold text-gray-800 mb-7">Shooping Cart</h1>
           <div className="max-w-7xl mx-auto flex gap-7">
             <div className=" flex flex-col gap-5 flex-1">
-              {cart?.items?.map((product, index) => (
+              {cart?.items?.map((product, index) => {
+                const productName = product?.productId?.productName || product?.productName || "Unknown Product";
+                const productPrice = product?.productId?.productPrice || product?.productPrice || 0;
+                const productImage = product?.productId?.productImg?.[0]?.url || product?.productImg?.[0]?.url || manocin;
+                const productIdValue = product?.productId?._id || product?._id;
+
+                return (
                 <Card key={index}>
                   <div className="flex justify-between items-center pr-7">
                     <div className="flex items-center w-[350px]">
                       <img
-                        className="w-25 h-25"
-                        src={product?.productId?.productImg?.[0].url || manocin}
-                        alt=""
+                        className="w-24 h-24 rounded object-cover"
+                        src={productImage}
+                        alt={productName}
                       />
-                      <div className="w-[280px]">
-                        <h1 className="font-semibold truncate">
-                          {product?.productId?.productName}
+                      <div className="w-[280px] pl-4">
+                        <h1 className="font-semibold truncate text-sm">
+                          {productName}
                         </h1>
-                        <p>₹{product?.productId?.productPrice}</p>
+                        <p className="text-pink-600 font-semibold">₹{productPrice}</p>
                       </div>
                     </div>
-                    <div className=" flex gap-5 items-center">
+                    <div className="flex gap-5 items-center">
                       <Button
-                        onClick={() => handleUpdateQuantity(product.productId._id, "decrease")}
+                        onClick={() => handleUpdateQuantity(productIdValue, "decrease")}
                         variant="outline"
+                        size="sm"
                       >
                         -
                       </Button>
-                      <span>{product.quantity}</span>
+                      <span className="w-8 text-center">{product.quantity}</span>
                       <Button
-                        onClick={() => handleUpdateQuantity(product.productId._id, "increase")}
+                        onClick={() => handleUpdateQuantity(productIdValue, "increase")}
                         variant="outline"
+                        size="sm"
                       >
                         +
                       </Button>
                     </div>
-                    <p>{product?.productId?.productPrice * product.quantity}</p>
-                    <p
-                      onClick={() => handleRemove(product?.productId?._id)}
-                      className="flex text-red-400 items-center gap-1 cursor-pointer"
+                    <p className="font-semibold min-w-20 text-right">₹{(productPrice * product.quantity).toLocaleString("en-IN")}</p>
+                    <button
+                      onClick={() => handleRemove(productIdValue)}
+                      className="flex text-red-500 items-center gap-1 cursor-pointer hover:text-red-700"
                     >
-                      <Trash2 />
-                      Remove
-                    </p>
+                      <Trash2 size={18} />
+                      <span className="text-sm">Remove</span>
+                    </button>
                   </div>
                 </Card>
-              ))}
+              );
+              })}
             </div>
             <div>
               <Card className="w-[400px]">
