@@ -39,10 +39,10 @@ const AdminUser = () => {
 
   console.log("user=>", users);
   return (
-    <div className="pl-[350px] py-20 pr-20 mx-auto px-4">
-      <h1 className=" font-bold text-2xl">User Managment</h1>
-      <p>View and Manage Registered User</p>
-      <div className="flex relative w-[300px] mt-6">
+    <div className="w-full h-screen px-4 md:px-8 mx-auto flex flex-col bg-white overflow-hidden">
+      <h1 className=" font-bold text-2xl py-6 shrink-0">User Managment</h1>
+      <p className="shrink-0">View and Manage Registered User</p>
+      <div className="flex relative w-[300px] mt-3 mb-3 shrink-0">
         <Input
           placeholder="Search Users..."
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -50,34 +50,36 @@ const AdminUser = () => {
         ></Input>
         <Search className="absolute left-2 top-1 text-gray-600"></Search>
       </div>
-      <div className="grid grid-cols-3 gap-7 mt-7">
+      <div className="grid grid-cols-3 gap-5 flex-1 overflow-y-auto">
         {filteredUser.map((user, index) => {
           return (
-            <div key={index} className="bg-pink-100 p-5 rounded-lg">
+            <div key={index} className="bg-pink-100 p-3 rounded-lg h-32">
               <div className="flex items-center gap-2">
                 <img
-                  className="rounded-full  w-16 aspect-square object-cover border border-pink-600"
+                  className="rounded-full w-14 aspect-square object-cover border border-pink-600 shrink-0"
                   src={user?.profilePic || UserLogo}
                   alt=""
                 />
-                <div>
-                  <h1 className="font-semibold">
+                <div className="min-w-0">
+                  <h1 className="font-semibold text-sm">
                     {user?.firstName} {user?.lastName}
                   </h1>
-                  <h3>{user?.email}</h3>
+                  <h3 className="text-xs text-gray-600 truncate">{user?.email}</h3>
                 </div>
               </div>
-              <div className="flex gap-3 mt-3">
-                <Button variant="outline" onClick={() => navigate(`/dashboard/users/${user?._id}`)}>
-                  <Edit />
+              <div className="flex gap-1 mt-2 text-xs">
+                <Button size="sm" variant="outline" onClick={() => navigate(`/dashboard/users/${user?._id}`)} className="flex-1">
+                  <Edit size={14} />
                   Edit
                 </Button>
                 <Button
+                  size="sm"
                   variant="outline"
                   onClick={() => navigate(`/dashboard/users/orders/${user?._id}`)}
+                  className="flex-1"
                 >
-                  <Eye />
-                  Show Order
+                  <Eye size={14} />
+                  View
                 </Button>
               </div>
             </div>

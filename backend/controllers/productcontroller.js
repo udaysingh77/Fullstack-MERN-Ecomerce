@@ -6,10 +6,10 @@ export const addProducts = async (req, res) => {
   try {
     const { productName, productDesc, productPrice, category, brand } = req.body;
     const userId = req.id;
-    if (!productPrice || !productDesc || !productPrice || !category || !brand) {
+    if (!productName || !productDesc || !productPrice || !category || !brand) {
       return res.status(400).json({
         status: false,
-        message: "All fields ar required",
+        message: "All fields are required",
       });
     }
 
@@ -46,7 +46,7 @@ export const addProducts = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      mesage: "Product created Succcessfully",
+      message: "Product created successfully",
       product,
     });
   } catch (error) {

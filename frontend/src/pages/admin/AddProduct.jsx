@@ -44,7 +44,7 @@ const AddProduct = () => {
     formData.append("brand", productData.brand);
     formData.append("category", productData.category);
     if (productData.productImg.length == 0) {
-      toast.error("please add at least one product");
+      toast.error("Please add at least one image");
       return;
     }
     productData.productImg.forEach((img) => formData.append("files", img));
@@ -70,13 +70,14 @@ const AddProduct = () => {
       }
     } catch (error) {
       console.log(error);
+      toast.error(error.response?.data?.message || "Failed to add product");
     } finally {
       setLoading(false);
     }
   };
   return (
-    <div className="pl-[350px] pr-20 py-6 bg-gray-100 min-h-screen flex">
-      <Card className="w-full my-20">
+    <div className="w-full bg-white h-screen flex px-4 md:px-8 py-6 overflow-y-auto mt-10">
+      <Card className="w-full max-w-4xl mx-auto my-6">
         <CardHeader>
           <CardTitle>Add Product</CardTitle>
           <CardDescription>Enter Product Details below</CardDescription>

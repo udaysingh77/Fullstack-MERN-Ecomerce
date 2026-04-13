@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Edit, Search, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
@@ -49,6 +49,21 @@ const AdminProduct = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const token = localStorage.getItem("token");
+
+  // Fetch all products when component loads
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/product/all-products`);
+        if (res.data.status) {
+          dispatch(setProducts(res.data.products));
+        }
+      } catch (error) {
+        console.log("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, [dispatch]);
 
   let filteredProducts = products.filter(
     (product) =>
@@ -139,7 +154,7 @@ const AdminProduct = () => {
   };
 
   return (
-    <div className="pl-[350px] py-20 pr-20 flex flex-col gap-3 min-h-screen bg-gray-100">
+    <div className="w-full px-4 md:px-8 py-6 flex  flex-col gap-3 h-screen bg-white mt-2 overflow-hidden">
       <div className="flex justify-between">
         <div>
           <Input
@@ -164,49 +179,67 @@ const AdminProduct = () => {
         </Select>
       </div>
 
-      {filteredProducts.map((product, index) => (
-        <Card key={index} className="px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2 items-center">
-              <img src={product.productImg[0]?.url} alt="" className="w-25 h-25" />
-              <h1>{product.productName}</h1>
+      <div className="flex-1 overflow-y-auto pr-2">
+        {filteredProducts.map((product, index) => (
+          <Card key={index} className="px-4 py-3 mb-3 border-l-4 border-l-pink-500 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex gap-3 items-center flex-1 min-w-0">
+                <img
+                  src={product.productImg[0]?.url}
+                  alt={product.productName}
+                  className="w-20 h-20 rounded object-cover shrink-0"
+                />
+                <div className="min-w-0 flex-1">
+                  <h1 className="font-semibold text-sm truncate">{product.productName}</h1>
+                  <p className="text-xs text-gray-500">{product.brand}</p>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <h1 className="font-bold text-pink-600">₹{product.productPrice}</h1>
+                <p className="text-xs text-gray-500">{product.category}</p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    setEditProduct(product);
+                    setOpen(true);
+                  }}
+                  className="p-2 hover:bg-green-50 rounded transition"
+                >
+                  <Edit
+                    size={18}
+                    className="text-green-500"
+                  />
+                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="p-2 hover:bg-red-50 rounded transition">
+                      <Trash2 size={18} className="text-red-500" />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete this product.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deleteProductHandler(product._id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
-            <h1>{product.productPrice}</h1>
-            <div className="flex gap-3">
-              <Edit
-                onClick={() => {
-                  setEditProduct(product);
-                  setOpen(true);
-                }}
-                className="text-green-500 cursor-pointer"
-              />
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Trash2 className="text-red-500 cursor-pointer" />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your account from
-                      our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => deleteProductHandler(product._id)}>
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        ))}
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-sm max-h-[740px] overflow-y-scroll">
+        <DialogContent className="sm:max-w-2xl max-h-[740px] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle>Edit product</DialogTitle>
             <DialogDescription>

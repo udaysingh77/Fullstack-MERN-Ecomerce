@@ -92,9 +92,9 @@ const UserInfo = () => {
   },[])
 
   return (
-    <div className="pl-[350px] w-full pt-5 min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+    <div className="w-full h-screen bg-gray-100 px-4 md:px-8 flex items-center justify-center overflow-hidden">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="flex flex-col justify-center items-center bg-gray-100">
           <div className="flex justify-between gap-10">
             <Button onClick={() => navigate(-1)}>
               <ArrowLeft />

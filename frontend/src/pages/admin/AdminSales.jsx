@@ -40,8 +40,8 @@ const AdminSales = () => {
   }, []);
 
   return (
-    <div className="pl-[350px] w-screen bg-gray-100 py-20 pr-20 mx-auto px-4">
-      <div className="p-6 grid gap-6 lg:grid-cols-4">
+    <div className="w-full h-screen bg-white mt-10 px-4 md:px-8 py-6 flex flex-col overflow-hidden">
+      <div className="p-6 grid gap-6 lg:grid-cols-4 shrink-0">
         {/* stats card */}
         <Card className="bg-pink-500 text-white shadow">
           <CardHeader>
@@ -69,12 +69,12 @@ const AdminSales = () => {
         </Card>
 
         {/* //sales chart */}
-        <Card className="lg:col-span-4">
-          <CardHeader>
+        <Card className="lg:col-span-4 flex flex-col h-80">
+          <CardHeader className="shrink-0">
             <CardTitle>Sales (Last 30 days)</CardTitle>
           </CardHeader>
 
-          <CardContent style={{ height: 300 }}>
+          <CardContent className="flex-1 flex items-center justify-center" style={{ height: 'auto' }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={stats.salesByDate}>
                 <XAxis dataKey="date" />

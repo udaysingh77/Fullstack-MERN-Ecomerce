@@ -39,12 +39,12 @@ const AdminOrders = () => {
   }
 
   return (
-    <div className="pl-[350px] py-20 pr-20 mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-6">Admin - All Orders</h1>
+    <div className="w-full h-screen px-4 md:px-8 mx-auto flex flex-col bg-white overflow-hidden">
+      <h1 className="text-3xl font-bold py-6 shrink-0">Admin - All Orders</h1>
       {orders.length === 0 ? (
         <p className="text-gray-500">No orders found</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-1 overflow-y-auto">
           <table className="w-full border border-gray-200 text-left text-sm">
             <thead className="bg-gray-100">
               <tr>

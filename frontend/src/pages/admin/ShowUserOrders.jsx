@@ -27,8 +27,10 @@ const ShowUserOrders = () => {
     getUserOrders();
   }, []);
   return (
-    <div className="pl-[350px] py-20">
-      <OrderCard userOrder={userOrder} />
+    <div className="w-full h-screen px-4 md:px-8 py-6 flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <OrderCard userOrder={userOrder} />
+      </div>
     </div>
   );
 };
